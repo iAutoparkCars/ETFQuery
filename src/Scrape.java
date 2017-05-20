@@ -6,6 +6,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+
 public class Scrape
 {
 	public static void main(String args[]) throws IOException
@@ -43,13 +44,13 @@ public class Scrape
 	
 }
 
-
 //class to read in user's input and process ETFQuery
 	class ReadInput implements Runnable
   {
-      public void run()
+		Scanner reader;
+		public void run()
       {
-          Scanner reader;
+          
           while (true)
           {
           	System.out.println("Enter the Ticker Symbol of the ETF you would like to query: ");
@@ -62,6 +63,7 @@ public class Scrape
           		ETFQuery query = new ETFQuery(chosen_etf);
           		query.getETFPage();
           		query.getETFDetail();
+          		query.generateCSV();
           	} 
           	catch (IOException e)
           	{e.printStackTrace();}

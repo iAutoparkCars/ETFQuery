@@ -10,6 +10,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+
 public class ETFQuery
 {
 	private Document search_result;
@@ -163,4 +168,104 @@ public class ETFQuery
 		
 		//some function to conver this XML file into CSV
 	}
+
+	public void generateCSV() throws FileNotFoundException
+	{
+			//initialize the tables
+		String holdingStr = "";
+		String countryStr = "";
+		String sectorStr = "";
+		
+			//specify the output CSV
+		String filename = ETF_Symbol.toUpperCase() + "_information.csv";
+		PrintWriter pw = new PrintWriter(new File(filename));
+	
+		holdingStr = createHoldingsTable(pw);
+		
+		if (!countryWeight.isEmpty())
+			countryStr = createCountryTable(pw);
+		
+		//createCSVSector();
+		pw.write(holdingStr + countryStr);
+        pw.close();
+        
+        //open the CSV
+        openCSVFile(filename);
+	}
+
+	private void openCSVFile(String filename)
+	{
+		if (Desktop.isDesktopSupported())
+        {
+            try 
+            {
+                File csvFile = new File(filename);
+                Desktop.getDesktop().open(csvFile);
+            } 
+            catch (IOException ex){}
+        }
+	}
+	
+	private String createHoldingsTable(PrintWriter pWriter)
+	{
+		StringBuilder str = new StringBuilder();
+		
+		//create ID for this table
+		str.append("TABLE_ID = TOP_TEN_HOLDINGS");
+		str.append('\n');
+		
+		//label each column
+		str.append("Name");
+        str.append(',');
+        str.append("Weight");
+        str.append(',');
+        str.append("Shares Held");
+        str.append('\n');
+        
+        //values for each column with a for loop
+        for (HoldingItem i : holdings)
+        {
+        	str.append(i.getName());
+            str.append(',');
+            str.append(i.getWeight()+"%");
+            str.append(',');
+            str.append(i.getShares());
+            str.append('\n');
+        }
+        str.append('\n');
+        
+        return str.toString();
+	}
+
+	private String createCountryTable(PrintWriter pWriter)
+	{
+		StringBuilder str = new StringBuilder();
+		
+			//create ID for this table
+		str.append("TABLE_ID = COUNTRY_WEIGHTS");
+		str.append('\n');
+		
+			//label each column
+		str.append("Country");
+        str.append(',');
+        str.append("Weight");
+        str.append('\n');
+        
+        	//get values from hashmap
+        for(SortedMap.Entry<String,Double> entry : countryWeight.entrySet())
+        {
+      		str.append(entry.getKey());
+            str.append(',');
+            str.append(entry.getValue()+"%");
+            str.append('\n');
+      		//System.out.println(country + " " + weight);
+      	}       
+        
+        str.append('\n');
+
+        return str.toString();
+	}
+
+		
+	
 }
