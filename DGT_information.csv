@@ -38,3 +38,18 @@ Unassigned,0.24%
 United Kingdom,7.26%
 United States,47.74%
 
+TABLE_ID = SECTOR_WEIGHTS
+Sector,Weight
+Financials,19.11%
+Industrials,14.6%
+Consumer Discretionary,12.56%
+Information Technology,12.28%
+Health Care,9.26%
+Energy,8.2%
+Consumer Staples,7.32%
+Materials,6.81%
+Telecommunication Services,4.86%
+Utilities,3.57%
+Unassigned,1.0%
+Real Estate,0.44%
+

@@ -1,10 +1,14 @@
 import java.io.IOException;
 import java.util.Scanner;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.xml.sax.SAXException;
 
 
 public class Scrape
@@ -66,6 +70,12 @@ public class Scrape
           		query.generateCSV();
           	} 
           	catch (IOException e)
+          	{e.printStackTrace();} catch
+          	(ParserConfigurationException e)
+          	{e.printStackTrace();} catch 
+          	(SAXException e) 
+          	{e.printStackTrace();} 
+          	catch (TransformerException e)
           	{e.printStackTrace();}
           	
           	//reader.close();

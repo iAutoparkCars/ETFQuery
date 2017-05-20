@@ -1,19 +1,24 @@
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+import org.xml.sax.SAXException;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 
 public class ETFQuery
 {
@@ -25,11 +30,13 @@ public class ETFQuery
 	private String objective;
 	private String ETF_Name;
 	public ArrayList<HoldingItem> holdings;
-	private Boolean isInternational = false;
 	
 	//Name is key, weight is the value
-	public SortedMap<String, Double> sectorWeight = new TreeMap<String, Double>();
+	//public SortedMap<String, Double> sectorWeight = new TreeMap<String, Double>();
 	public SortedMap<String, Double> countryWeight = new TreeMap<String, Double>();
+	public List<SectorItem> sectorList = new ArrayList<SectorItem>();
+	public String sectorWeight = "";
+	
 	
 	//public HashMap<String, Double> sectorWeight = new HashMap<String,Double>();
 	//public HashMap<String, Double> countryWeight = new HashMap<String,Double>();
@@ -164,12 +171,26 @@ public class ETFQuery
 	private void getETFSector()
 	{
 		Elements divWithId = search_result.select("div#FUND_SECTOR").select("div#SectorsAllocChart");
-		System.out.println(divWithId.text());
 		
+		//get the XML brackets
+		sectorWeight = divWithId.text().replace("&lt;", "<").replace("&gt;",">");
+
+		//collect attributes and store into list of sectors
+		Document doc = Jsoup.parse(sectorWeight, "", Parser.xmlParser());
+		for (Element e : doc.select("attribute"))
+		{
+			String value = e.select("rawValue").text();
+			String sector = e.select("label").text();
+			
+			SectorItem item = new SectorItem(sector,value);
+			sectorList.add(item);
+		}
+		
+		//System.out.println(sectorWeight);
 		//some function to conver this XML file into CSV
 	}
 
-	public void generateCSV() throws FileNotFoundException
+	public void generateCSV() throws ParserConfigurationException, SAXException, IOException, TransformerException
 	{
 			//initialize the tables
 		String holdingStr = "";
@@ -180,17 +201,20 @@ public class ETFQuery
 		String filename = ETF_Symbol.toUpperCase() + "_information.csv";
 		PrintWriter pw = new PrintWriter(new File(filename));
 	
+			//create the tables
 		holdingStr = createHoldingsTable(pw);
-		
+
 		if (!countryWeight.isEmpty())
 			countryStr = createCountryTable(pw);
 		
-		//createCSVSector();
-		pw.write(holdingStr + countryStr);
+		sectorStr = createSectorTable(pw);
+		
+			//createCSVSector();
+		pw.write(holdingStr + countryStr + sectorStr);
         pw.close();
         
         //open the CSV
-        openCSVFile(filename);
+        //openCSVFile(filename);
 	}
 
 	private void openCSVFile(String filename)
@@ -251,7 +275,7 @@ public class ETFQuery
         str.append("Weight");
         str.append('\n');
         
-        	//get values from hashmap
+        	//get values from hashmap by iterating through each entry (String,Double pair)
         for(SortedMap.Entry<String,Double> entry : countryWeight.entrySet())
         {
       		str.append(entry.getKey());
@@ -266,6 +290,31 @@ public class ETFQuery
         return str.toString();
 	}
 
+	private String createSectorTable(PrintWriter pWriter) 
+	{
+		StringBuilder str = new StringBuilder();
+
+		str.append("TABLE_ID = SECTOR_WEIGHTS");
+		str.append('\n');
 		
+		//label each column
+		str.append("Sector");
+		str.append(',');
+		str.append("Weight");
+		str.append('\n');
+		
+		for(SectorItem i : sectorList)
+		{
+			str.append(i.getSector());
+			str.append(',');
+			str.append(i.getValue()+"%");
+			str.append('\n');
+		}       
+	        
+	    str.append('\n');
+		
+		
+		return str.toString();
+	}
 	
 }
