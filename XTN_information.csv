@@ -11,3 +11,13 @@ Kansas City Southern,2.93%,57756
 Southwest Airlines Co.,2.91%,90312
 American Airlines Group Inc.,2.89%,114956
 
+TABLE_ID = SECTOR_WEIGHTS
+Sector,Weight
+Trucking,31.48%
+Airlines,27.82%
+Air Freight & Logistics,19.71%
+Railroads,14.01%
+Marine,3.98%
+Airport Services,2.85%
+Unassigned,0.15%
+

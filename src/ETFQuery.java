@@ -2,6 +2,7 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -14,6 +15,7 @@ import org.xml.sax.SAXException;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -79,7 +81,6 @@ public class ETFQuery
 		}
 	}
 	
-	
 	public void getETFDetail() throws IOException
 	{
 		getETFName();
@@ -89,7 +90,6 @@ public class ETFQuery
 		getETFSector();
 	}
 	
-
 	//this function gets the document, so this MUST be called before the other getETF* functions
 	private void getETFName() throws IOException
 	{
@@ -193,8 +193,8 @@ public class ETFQuery
 	public void generateCSV() throws ParserConfigurationException, SAXException, IOException, TransformerException
 	{
 			//initialize the tables
-		String holdingStr = "";
 		String countryStr = "";
+		String holdingStr = "";
 		String sectorStr = "";
 		
 			//specify the output CSV
@@ -202,15 +202,15 @@ public class ETFQuery
 		PrintWriter pw = new PrintWriter(new File(filename));
 	
 			//create the tables
-		holdingStr = createHoldingsTable(pw);
+		countryStr = createHoldingsTable();
 
 		if (!countryWeight.isEmpty())
-			countryStr = createCountryTable(pw);
+			holdingStr = createCountryTable();
 		
-		sectorStr = createSectorTable(pw);
+		sectorStr = createSectorTable();
 		
 			//createCSVSector();
-		pw.write(holdingStr + countryStr + sectorStr);
+		pw.write(countryStr + holdingStr + sectorStr);
         pw.close();
         
         //open the CSV
@@ -230,7 +230,7 @@ public class ETFQuery
         }
 	}
 	
-	private String createHoldingsTable(PrintWriter pWriter)
+	private String createHoldingsTable()
 	{
 		StringBuilder str = new StringBuilder();
 		
@@ -261,7 +261,7 @@ public class ETFQuery
         return str.toString();
 	}
 
-	private String createCountryTable(PrintWriter pWriter)
+	private String createCountryTable()
 	{
 		StringBuilder str = new StringBuilder();
 		
@@ -290,7 +290,7 @@ public class ETFQuery
         return str.toString();
 	}
 
-	private String createSectorTable(PrintWriter pWriter) 
+	private String createSectorTable() 
 	{
 		StringBuilder str = new StringBuilder();
 
@@ -317,4 +317,153 @@ public class ETFQuery
 		return str.toString();
 	}
 	
+	public void generateHTMLTable() throws FileNotFoundException
+	{
+		StringBuilder open = new StringBuilder();
+		StringBuilder close = new StringBuilder();
+		String title = "";
+		String holdingTable = "";
+		String countryTable = "";
+		String sectorTable = "";
+		
+		String filename = ETF_Symbol.toUpperCase() + "_Table.html";
+		PrintWriter pw = new PrintWriter(new File(filename));
+		
+		//add opening tags
+		open.append("<!DOCTYPE html>");
+		open.append("<html>" + '\n');
+		
+			//opening tags for style
+			open.append("<head>" + '\n');
+			open.append("<style>" + '\n');
+		
+			//table structure
+			open.append("table{font-family: arial, sans-serif; border-collapse: collapse; width: 100%;}");
+			open.append("td, th {border: 1px solid #dddddd;   text-align: left;  padding: 8px; }");
+			open.append("tr:nth-child(even) {background-color: #dddddd;}");
+		
+			//closing tags for style
+			open.append("</style>" + '\n');
+			open.append("</head>" + '\n');
+		
+				open.append("<body>" + '\n');
+				
+		
+		title = createTitleHTML();		
+		holdingTable = createHoldingsHTML();
+		if (!countryWeight.isEmpty())
+			countryTable = createCountryHTML();
+		sectorTable = createSectorHTML();
+		
+		//add closing tags
+				close.append("</body>" + '\n');
+		close.append("</html>" + '\n');
+		
+		//write to file
+		String result = open.toString() + title + holdingTable + countryTable + sectorTable + close.toString();
+		pw.write(result);
+		pw.close();
+		
+	}
+	
+	private String createTitleHTML()
+	{
+		StringBuilder str = new StringBuilder();
+		
+		str.append("<table>" + '\n');
+		str.append("<h1>"+ETF_Name+"</h1>" + '\n');
+		str.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td><h4>"+objective+
+				"</h4></td></tr> </table> " + '\n');
+		str.append("</table>" + '\n');
+		
+		return str.toString();
+	}
+	
+	private String createHoldingsHTML()
+	{
+		StringBuilder countryStr = new StringBuilder();
+		
+		countryStr.append("<table>" + '\n');
+		countryStr.append("TOP_TEN_HOLDINGS" + '\n');
+			
+			//labeling the columns
+			countryStr.append("<tr>" + '\n');
+				countryStr.append("<th>Name</th>" + '\n');
+				countryStr.append("<th>Weight</th>" + '\n');
+				countryStr.append("<th>Shares</th>" + '\n');
+			countryStr.append("<tr>" + '\n');
+			
+			//printing the entries
+			for (HoldingItem i : holdings)
+			{
+				countryStr.append("<tr>" + '\n');
+					countryStr.append("<td>"+i.getName()+"</td>" + '\n');
+					countryStr.append("<td>"+i.getWeight()+"%"+"</td>" + '\n');
+					countryStr.append("<td>"+i.getShares()+"</td>" + '\n');
+				countryStr.append("<tr>" + '\n');
+			}
+
+		countryStr.append("</table>" + '\n');
+		countryStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');
+		
+		return countryStr.toString();
+	}
+	
+	private String createCountryHTML()
+	{
+		StringBuilder countryStr = new StringBuilder();
+		
+		countryStr.append("<table>" + '\n');
+		countryStr.append("COUNTRY_WEIGHTS" + '\n');
+			
+			//labeling the columns
+			countryStr.append("<tr>" + '\n');
+				countryStr.append("<th>Country</th>" + '\n');
+				countryStr.append("<th>Weight</th>" + '\n');
+			countryStr.append("<tr>" + '\n');
+			
+			//printing the entries
+			for (SortedMap.Entry<String,Double> entry : countryWeight.entrySet())
+			{
+				countryStr.append("<tr>" + '\n');
+					countryStr.append("<td>"+entry.getKey() +"</td>" + '\n');
+					countryStr.append("<td>"+entry.getValue() +"%"+"</td>" + '\n');
+				countryStr.append("<tr>" + '\n');
+			}
+
+		countryStr.append("</table>" + '\n');
+		countryStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');
+		
+		return countryStr.toString();
+
+	}
+
+	private String createSectorHTML()
+	{
+		StringBuilder sectorStr = new StringBuilder();
+		
+		sectorStr.append("<table>" + '\n');
+		sectorStr.append("SECTOR_WEIGHTS" + '\n');
+			
+			//labeling the columns
+			sectorStr.append("<tr>" + '\n');
+				sectorStr.append("<th>Sector</th>" + '\n');
+				sectorStr.append("<th>Value</th>" + '\n');
+			sectorStr.append("<tr>" + '\n');
+			
+			//printing the entries
+			for (SectorItem i : sectorList)
+			{
+				sectorStr.append("<tr>" + '\n');
+					sectorStr.append("<td>"+i.getSector() +"</td>" + '\n');
+					sectorStr.append("<td>"+i.getValue() +"%"+"</td>" + '\n');
+				sectorStr.append("<tr>" + '\n');
+			}
+
+		sectorStr.append("</table>" + '\n');
+		sectorStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');
+		
+		return sectorStr.toString();
+
+	}
 }
