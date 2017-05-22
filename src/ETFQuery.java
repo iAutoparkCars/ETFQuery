@@ -28,6 +28,7 @@ public class ETFQuery
 	private String baseURL = "https://us.spdrs.com/en";
 	public String ETF_Symbol;
 	public String html_path = "";
+	public String csvpath = "";
 	
 	//information to parse from detailed ETF URL
 	private String objective;
@@ -35,7 +36,6 @@ public class ETFQuery
 	public ArrayList<HoldingItem> holdings;
 	
 	//Name is key, weight is the value
-	//public SortedMap<String, Double> sectorWeight = new TreeMap<String, Double>();
 	public SortedMap<String, Double> countryWeight = new TreeMap<String, Double>();
 	public List<SectorItem> sectorList = new ArrayList<SectorItem>();
 	public String sectorWeight = "";
@@ -92,7 +92,7 @@ public class ETFQuery
 		//a.insertCountries(countryWeight);
 	}
 	
-	//this function gets the document, so this MUST be called before the other getETF* functions
+	//this function gets the HTML document of the ETF, so this MUST be called before the other getETF* functions
 	private void getETFName() throws IOException
 	{
 			//loading the document from detailed ETF page
@@ -102,6 +102,7 @@ public class ETFQuery
 		//System.out.println(ETF_Name);
 	}
 
+	//getETF* functions parase the data and store into appropriate data structures
 	public void getETFObjective() throws IOException
 	{
 			//get objective info
@@ -129,11 +130,7 @@ public class ETFQuery
 			holdings.add(item);
 		}
 	
-		/*for (HoldingItem i : holdings)
-		{
-			System.out.println(i.toString());
-		}
-		System.out.println("");*/
+		
 	}
 
 	private void getETFCountry()
@@ -157,16 +154,11 @@ public class ETFQuery
 					//System.out.println(country + " " + weight + "%");
 					countryWeight.put(country, weight);
 					
-					//System.out.println(country_weights.get(i).select("td").get(2*j+0).text());
-					//System.out.println(country_weights.get(i).select("td").get(2*j+1).text());
 
 				}
-				//System.out.println(country_weights.get(i).select("tr").select("td.label").text());
-				//System.out.println(country_weights.get(i).select("td.data").text());
 			}
 		}	//end outer for loop
 		
-		//System.out.println(countryWeight.keySet() + " " + countryWeight.size());
 		
 	}
 
@@ -189,7 +181,6 @@ public class ETFQuery
 		}
 		
 		//System.out.println(sectorWeight);
-		//some function to conver this XML file into CSV
 	}
 
 	public void generateCSV() throws ParserConfigurationException, SAXException, IOException, TransformerException
@@ -200,7 +191,9 @@ public class ETFQuery
 		String sectorStr = "";
 		
 			//specify the output CSV
-		String filename = ETF_Symbol.toUpperCase() + "_information.csv";
+		String csvpath = ETF_Symbol.toUpperCase() + "_information.csv";
+		this.csvpath = csvpath;
+		String filename = csvpath;
 		PrintWriter pw = new PrintWriter(new File(filename));
 	
 			//create the tables
@@ -216,7 +209,7 @@ public class ETFQuery
         pw.close();
         
         //open the CSV
-        //openFile(filename);
+        openFile(filename);
 	}
 
 	public void openFile(String filename)
@@ -417,12 +410,6 @@ public class ETFQuery
 		BarChart bar = new BarChart(ETF_Symbol, ETF_Name.toUpperCase(), holdings);
 		bar.createBarChart();
 				
-		//PieChart pie = new PieChart(ETF_Symbol, ETF_Name.toUpperCase(), countryWeight, sectorList);
-		//pie.createSectorPie();
-		
-		/*if(!countryWeight.isEmpty())
-		{pie.createCountryPie();}*/
-		
 		
 		countryStr.append("<img src=\"" + bar.getChartPath() + "\" alt=\"\" style=\"width:540px;height:480px;\" >");
 		countryStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');

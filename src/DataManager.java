@@ -14,6 +14,7 @@ public class DataManager
 	public SortedMap<String, Double> countryWeight = new TreeMap<String, Double>();
 	public List<SectorItem> sectorList = new ArrayList<SectorItem>();
 	
+	//values to access the local database
 	static String database = "jdbc:mysql://localhost:3306/demo";
 	static String user = "orbis";
 	static String password = "orbis";
@@ -23,7 +24,7 @@ public class DataManager
 	public DataManager(String symb){}
 	
 	
-	
+	//functions to fetch data from the local database
 	public ArrayList<HoldingItem> fetchHoldings()
 	{
 		ArrayList<HoldingItem> holdingList = new ArrayList<HoldingItem>();;
@@ -56,6 +57,39 @@ public class DataManager
 		return holdingList;
 	}
 	
+	public ArrayList<SectorItem> fetchSectors()
+	{
+		ArrayList<SectorItem> sectorList = new ArrayList<SectorItem>();;
+		try
+		{
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/demo",user,password);
+			
+			Statement myStat = conn.createStatement();
+			
+			ResultSet myRes = myStat.executeQuery("select * from sectors");
+			
+			while(myRes.next())
+			{
+				String name = myRes.getString("name");
+				String weight = myRes.getString("weight");
+				
+				//System.out.println(myRes.getString("name") + " " + myRes.getDouble("weight") + " " + myRes.getInt("shares"));
+				SectorItem item = new SectorItem(name, weight);
+				sectorList.add(item);
+			}
+		}
+		catch(Exception e)
+		{e.printStackTrace();}
+		
+		for (SectorItem i : sectorList)
+		{
+			System.out.println(i.toString());
+		}
+		return sectorList;
+	}
+	
+	
+	//functions to push data into the database
 	public void insertHoldings(ArrayList<HoldingItem> list)
 	{
 		try

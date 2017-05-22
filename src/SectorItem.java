@@ -1,4 +1,4 @@
-
+//Class to logically store the fields of each entry in Sector Weights
 public class SectorItem
 {
 	private String sector = "";

@@ -39,6 +39,8 @@ public class Scrape
           	try
           	{
           		ETFQuery query = new ETFQuery(chosen_etf);
+          		
+          		//gathering and processing EtF's data
           		query.getETFPage();
           		query.getETFDetail();
           		query.generateCSV();
@@ -46,10 +48,11 @@ public class Scrape
           	
           		//open the HTML with all the data that I had gathered and processed
           		String path = query.getHTMLPath();
-          		//query.openFile(path);
+          		query.openFile(path);
           		
-          		
-          		
+          		//open the CSV file
+          		Thread.sleep(600);
+          		query.openFile(query.csvpath);
           		
           	} 
           	catch (IOException e)
@@ -63,6 +66,7 @@ public class Scrape
           	(SAXException e) 
           	{e.printStackTrace();} 
           	catch (TransformerException e)
+          	{e.printStackTrace();} catch (InterruptedException e)
           	{e.printStackTrace();}
           	
           	//reader.close();

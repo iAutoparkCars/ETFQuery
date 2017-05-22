@@ -1,5 +1,4 @@
 //Class to logically store the fields of each holding in TOP_TEN_HOLDINGS
-
 public class HoldingItem
 {
 	private String name;

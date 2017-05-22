@@ -36,14 +36,7 @@ public class BarChart
 	
 	public void createBarChart() throws IOException
 	{
-		final String fiat = "FIAT";
-		final String audi = "AUDI";
-		final String ford = "FORD";
 		
-		final String speed = "Speed";
-		final String millage = "Millage";
-		final String userrating = "User Rating";
-		final String safety = "safety";
 
 		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 		
