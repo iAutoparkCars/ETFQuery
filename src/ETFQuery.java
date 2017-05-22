@@ -27,6 +27,7 @@ public class ETFQuery
 	private Document search_result;
 	private String baseURL = "https://us.spdrs.com/en";
 	public String ETF_Symbol;
+	public String html_path = "";
 	
 	//information to parse from detailed ETF URL
 	private String objective;
@@ -42,8 +43,6 @@ public class ETFQuery
 	
 	//public HashMap<String, Double> sectorWeight = new HashMap<String,Double>();
 	//public HashMap<String, Double> countryWeight = new HashMap<String,Double>();
-
-	
 	
 	public ETFQuery (String ETF_Symbol) throws IOException
 	{
@@ -317,7 +316,7 @@ public class ETFQuery
 		return str.toString();
 	}
 	
-	public void generateHTMLTable() throws FileNotFoundException
+	public void generateHTMLTable() throws IOException
 	{
 		StringBuilder open = new StringBuilder();
 		StringBuilder close = new StringBuilder();
@@ -360,6 +359,9 @@ public class ETFQuery
 				close.append("</body>" + '\n');
 		close.append("</html>" + '\n');
 		
+		//creating the HTML for the charts
+		
+		
 		//write to file
 		String result = open.toString() + title + holdingTable + countryTable + sectorTable + close.toString();
 		pw.write(result);
@@ -380,7 +382,7 @@ public class ETFQuery
 		return str.toString();
 	}
 	
-	private String createHoldingsHTML()
+	private String createHoldingsHTML() throws IOException
 	{
 		StringBuilder countryStr = new StringBuilder();
 		
@@ -407,10 +409,24 @@ public class ETFQuery
 		countryStr.append("</table>" + '\n');
 		countryStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');
 		
+		//crete and append the bar chart
+		BarChart bar = new BarChart(ETF_Symbol, ETF_Name.toUpperCase(), holdings);
+		bar.createBarChart();
+				
+		//PieChart pie = new PieChart(ETF_Symbol, ETF_Name.toUpperCase(), countryWeight, sectorList);
+		//pie.createSectorPie();
+		
+		/*if(!countryWeight.isEmpty())
+		{pie.createCountryPie();}*/
+		
+		
+		countryStr.append("<img src=\"" + bar.getChartPath() + "\" alt=\"\" style=\"width:540px;height:480px;\" >");
+		countryStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');
+		
 		return countryStr.toString();
 	}
 	
-	private String createCountryHTML()
+	private String createCountryHTML() throws IOException
 	{
 		StringBuilder countryStr = new StringBuilder();
 		
@@ -435,11 +451,18 @@ public class ETFQuery
 		countryStr.append("</table>" + '\n');
 		countryStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');
 		
+		//creating the pie and adding the resulting png chart to the HTML
+		PieChart pie = new PieChart(ETF_Symbol, ETF_Name.toUpperCase(), countryWeight, sectorList);
+		pie.createCountryPie();
+		
+		countryStr.append("<img src=\"" + pie.getCountryPath() + "\" alt=\"\" style=\"width:640px;height:540px;\" >");
+		countryStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');
+		
 		return countryStr.toString();
 
 	}
 
-	private String createSectorHTML()
+	private String createSectorHTML() throws IOException
 	{
 		StringBuilder sectorStr = new StringBuilder();
 		
@@ -464,19 +487,19 @@ public class ETFQuery
 		sectorStr.append("</table>" + '\n');
 		sectorStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');
 		
+		PieChart pie = new PieChart(ETF_Symbol, ETF_Name.toUpperCase(), countryWeight, sectorList);
+		pie.createSectorPie();
+		
+		sectorStr.append("<img src=\"" + pie.getSectorPath() + "\" alt=\"\" style=\"width:540px;height:480px;\" >");
+		sectorStr.append("<table STYLE=\"margin-bottom: 30px;\"><tr><td></td></tr></table>" + '\n');
+		
 		return sectorStr.toString();
 
 	}
 
-	public void generateCharts() throws IOException
+	public String getHTMLPath()
 	{
-		//initializes ETF name, objective, holdings, country weights, and sector weights
-		BarChart bar = new BarChart(ETF_Symbol, ETF_Name.toUpperCase(), holdings);
-		bar.createBarChart();
-		
-		PieChart pie = new PieChart(ETF_Symbol, ETF_Name.toUpperCase(), countryWeight, sectorList);
-		
-		
+		return html_path;
 	}
 	
 }

@@ -20,7 +20,7 @@ public class BarChart
 	private ArrayList<HoldingItem> holdings;
 	private SortedMap<String, Double> countryWeight = new TreeMap<String, Double>();
 	private List<SectorItem> sectorList = new ArrayList<SectorItem>();
-	
+	private String chartpath;
 	
 	public BarChart(String symb, String name, ArrayList<HoldingItem> holdings)
 	{
@@ -29,6 +29,11 @@ public class BarChart
 		this.holdings = holdings;
 	}
 	   
+	public String getChartPath()
+	{
+		return chartpath;
+	}
+	
 	public void createBarChart() throws IOException
 	{
 		final String fiat = "FIAT";
@@ -56,7 +61,10 @@ public class BarChart
 	      int width = 540;    /* Width of the image */
 	      int height = 480;   /* Height of the image */ 
 	      String chartname = ETF_Symbol.toUpperCase() + "_" + "BarChart.jpg";
+	      this.chartpath = chartname;
 	      File BarChart = new File(chartname); 
 	      ChartUtilities.saveChartAsJPEG(BarChart , barChart , width , height );
 	   }
+	
+	  
 }

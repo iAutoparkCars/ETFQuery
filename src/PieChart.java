@@ -14,6 +14,9 @@ import org.jfree.data.general.DefaultPieDataset;
 
 public class PieChart
 {
+	String pie_countrypath = "";
+	String pie_sectorpath = "";
+	
 	private String ETF_Symbol;
 	private String ETF_Name;
 	private String objective;
@@ -28,16 +31,17 @@ public class PieChart
 		this.sectorList = sectorList;
 	}
 
-	public void createPieChart() throws IOException
+	public void createSectorPie() throws IOException
 	{
 		DefaultPieDataset dataset = new DefaultPieDataset( );
-		dataset.setValue("IPhone 5s", new Double( 20 ) );
-		dataset.setValue("SamSung Grand", new Double( 20 ) );
-		dataset.setValue("MotoG", new Double( 40 ) );
-		dataset.setValue("Nokia Lumia", new Double( 10 ) );
+
+		for (SectorItem i : sectorList)
+		{
+			dataset.setValue(i.getSector(), new Double( i.getValue() ) );
+		}
 
 		JFreeChart chart = ChartFactory.createPieChart(
-			"Mobile Sales",   // chart title
+			ETF_Symbol + " Sector Weights",   // chart title
 	         dataset,          // data
 	         true,             // include legend
 	         true,
@@ -45,7 +49,43 @@ public class PieChart
 	         
 		int width = 540;   /* Width of the image */
 		int height = 480;  /* Height of the image */ 
-		File pieChart = new File( "PieChart.jpeg" ); 
+		String sectorpath = ETF_Symbol + "_SectorPie.jpg";
+		this.pie_sectorpath = sectorpath;
+		File pieChart = new File( sectorpath ); 
 		ChartUtilities.saveChartAsJPEG( pieChart , chart , width , height );
+	}
+	
+	public void createCountryPie() throws IOException
+	{
+		DefaultPieDataset dataset = new DefaultPieDataset( );
+
+		for (SortedMap.Entry<String,Double> i : countryWeight.entrySet())
+		{
+			dataset.setValue(i.getKey(), new Double( i.getValue() ) );
+		}
+
+		JFreeChart chart = ChartFactory.createPieChart(
+			ETF_Symbol + " Country Weights",   // chart title
+	         dataset,          // data
+	         true,             // include legend
+	         true,
+	         false);
+	         
+		int width = 840;   /* Width of the image */
+		int height = 720;  /* Height of the image */ 
+		String path = ETF_Symbol + "_CountryPie.jpg";
+		pie_countrypath = path;
+		File pieChart = new File( path ); 
+		ChartUtilities.saveChartAsJPEG( pieChart , chart , width , height );
+	}
+	
+	public String getCountryPath()
+	{
+		return pie_countrypath;
+	}
+
+	public String getSectorPath()
+	{
+		return pie_sectorpath;
 	}
 }
