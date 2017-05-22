@@ -49,7 +49,7 @@ public class ETFQuery
 	{
 			//get the HTML doc associated with the web page with a timeout
 		search_result = Jsoup.connect(baseURL).timeout(5000).get();
-		this.ETF_Symbol = ETF_Symbol;
+		this.ETF_Symbol = ETF_Symbol.toUpperCase();
 		holdings = new ArrayList<HoldingItem>();
 		
 	}
@@ -214,10 +214,10 @@ public class ETFQuery
         pw.close();
         
         //open the CSV
-        //openCSVFile(filename);
+        //openFile(filename);
 	}
 
-	private void openCSVFile(String filename)
+	private void openFile(String filename)
 	{
 		if (Desktop.isDesktopSupported())
         {
@@ -327,7 +327,8 @@ public class ETFQuery
 		String sectorTable = "";
 		
 		String filename = ETF_Symbol.toUpperCase() + "_Table.html";
-		PrintWriter pw = new PrintWriter(new File(filename));
+		File file = new File(filename);
+		PrintWriter pw = new PrintWriter(file);
 		
 		//add opening tags
 		open.append("<!DOCTYPE html>");
@@ -466,4 +467,16 @@ public class ETFQuery
 		return sectorStr.toString();
 
 	}
+
+	public void generateCharts() throws IOException
+	{
+		//initializes ETF name, objective, holdings, country weights, and sector weights
+		BarChart bar = new BarChart(ETF_Symbol, ETF_Name.toUpperCase(), holdings);
+		bar.createBarChart();
+		
+		PieChart pie = new PieChart(ETF_Symbol, ETF_Name.toUpperCase(), countryWeight, sectorList);
+		
+		
+	}
+	
 }

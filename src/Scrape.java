@@ -19,7 +19,6 @@ public class Scrape
 		Thread inputThread = new Thread(input);
 		inputThread.start();
 		
-		
 	}
 
 	
@@ -46,6 +45,7 @@ public class Scrape
           		query.getETFDetail();
           		query.generateCSV();
           		query.generateHTMLTable();
+          		query.generateCharts();
           	} 
           	catch (IOException e)
           	{e.printStackTrace();
