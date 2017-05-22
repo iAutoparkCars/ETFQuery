@@ -40,10 +40,6 @@ public class ETFQuery
 	public List<SectorItem> sectorList = new ArrayList<SectorItem>();
 	public String sectorWeight = "";
 	
-	
-	//public HashMap<String, Double> sectorWeight = new HashMap<String,Double>();
-	//public HashMap<String, Double> countryWeight = new HashMap<String,Double>();
-	
 	public ETFQuery (String ETF_Symbol) throws IOException
 	{
 			//get the HTML doc associated with the web page with a timeout
@@ -87,6 +83,13 @@ public class ETFQuery
 		getETFHoldings();
 		getETFCountry();
 		getETFSector();
+		
+		//insert all data in DB. This section is commented because I currently 
+		//do not want to re-insert Primary Keys (induces error)
+		DataManager a = new DataManager();
+		//a.insertHoldings(holdings);
+		//a.insertSectors(sectorList);
+		//a.insertCountries(countryWeight);
 	}
 	
 	//this function gets the document, so this MUST be called before the other getETF* functions
@@ -216,7 +219,7 @@ public class ETFQuery
         //openFile(filename);
 	}
 
-	private void openFile(String filename)
+	public void openFile(String filename)
 	{
 		if (Desktop.isDesktopSupported())
         {
@@ -326,6 +329,7 @@ public class ETFQuery
 		String sectorTable = "";
 		
 		String filename = ETF_Symbol.toUpperCase() + "_Table.html";
+		html_path = filename;
 		File file = new File(filename);
 		PrintWriter pw = new PrintWriter(file);
 		

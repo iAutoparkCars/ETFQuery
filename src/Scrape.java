@@ -18,9 +18,7 @@ public class Scrape
 		ReadInput input = new ReadInput();
 		Thread inputThread = new Thread(input);
 		inputThread.start();
-		
 	}
-
 	
 }
 
@@ -46,7 +44,13 @@ public class Scrape
           		query.generateCSV();
           		query.generateHTMLTable();
           	
-          	
+          		//open the HTML with all the data that I had gathered and processed
+          		String path = query.getHTMLPath();
+          		//query.openFile(path);
+          		
+          		
+          		
+          		
           	} 
           	catch (IOException e)
           	{e.printStackTrace();
