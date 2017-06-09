@@ -18,3 +18,13 @@ User specifies the name of a fund upon program's start. The program will scrape 
 The program will also build an HTML Table containing the appropriate data (Sector weights, country weights, # of shares, top holdings, etc) pertaining to the fund specified by user (in this case, DGT)
 
 <a href="https://imgflip.com/gif/1ql6pd"><img src="https://i.imgflip.com/1ql6pd.gif" title="made at imgflip.com"/></a>
+
+# ETFQuery Data to Graphs (built using Java), then to HTML table
+Data to pie chart and bar chart using Java, then graphs to HTML table
+
+<a href="https://imgflip.com/gif/1qmqxk"><img src="https://i.imgflip.com/1qmqxk.gif" title="made at imgflip.com"/></a>
+
+
+# ETF Data uploaded to SQL Workbench
+
+<a href="https://imgflip.com/gif/1qmr57"><img src="https://i.imgflip.com/1qmr57.gif" title="made at imgflip.com"/></a>
