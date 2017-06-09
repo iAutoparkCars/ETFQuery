@@ -1,9 +1,9 @@
 # ETFQuery Funds
-spdrs.com
+Scrape data from spdrs.com for any Global/International Equities and US Equities
 
 ![spdrs fund site](https://user-images.githubusercontent.com/14288932/26971991-aef49676-4cdd-11e7-9a76-1d59e4befa11.png)
 
-User specifies the name of a fund upon program's start. In this example, I use the fund with ticker symbol DGT
+In this example, I use the fund with ticker symbol DGT
 
 ![spdrs website](https://user-images.githubusercontent.com/14288932/26971856-0f63e59e-4cdd-11e7-9d6b-775ff659f9cb.png)
 
