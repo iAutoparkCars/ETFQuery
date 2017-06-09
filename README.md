@@ -15,6 +15,6 @@ User specifies the name of a fund upon program's start. The program will scrape 
 
 
 # ETFQuery Data to HTML Table
-The program will also build an HTML Table containing the appropriate data (Sector weights, country weights, # of shares, etc) pertaining to the fund specified by user (in this case, DGT)
+The program will also build an HTML Table containing the appropriate data (Sector weights, country weights, # of shares, top holdings, etc) pertaining to the fund specified by user (in this case, DGT)
 
 <a href="https://imgflip.com/gif/1ql6pd"><img src="https://i.imgflip.com/1ql6pd.gif" title="made at imgflip.com"/></a>
